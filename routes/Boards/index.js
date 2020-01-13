@@ -90,23 +90,41 @@ router.put('/:board_id', authUtil.validToken, async (req, res) => {
 });
 
 // 전체 게시글 조회 라우트
-router.get('/', async (req, res) => {
+router.get('/pages/:page', async (req, res) => {
     /*  populate 메소드는 reference 속성을 이용해 다른 collection으로부터 
         정보들을 가져오는 기능을 수행한다.
         입력 인자로는 기준이 될 속성 값을 넣어야 한다.  */
-    Board.find().populate('comments').populate('user_id').exec((err, result) => {
+
+    const maxPage = await Board.countDocuments({}) / 3;
+    
+    Board.find()
+    .populate('user_id', 'name email')
+    /*  skip
+        출력할 데이터의 시작 부분을 설정한다. 
+        value 값 갯수의 데이터를 생략하고 그 다음부터 출력
+        (3 * 1) - 3 = 생략하지 않음, (3 * 2) - 3 = 3개 document 생략   */ 
+    .skip((3 * req.params.page) - 3)
+    /*  limit
+        불러온 데이터에서 value 개 만큼만 출력한다. */
+    .limit(3)
+    .exec((err, result) => {
         if(err){
             console.log(err);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(utils.successFalse(responseMessage.BOARD_READ_ALL_FAIL));
         }
+        result.push({maxPage : maxPage});
         return res.status(statusCode.OK).send(utils.successTrue(responseMessage.BOARD_READ_ALL_SUCCESS, result));
     });
 });
 
 // 상세 게시글 조회 라우트
 router.get('/:boardIdx', async (req, res) => {
-    Board.findOne({_id: req.params.boardIdx}, function (err, result) {
+    Board.findOne({_id: req.params.boardIdx})
+    .populate('comments')
+    .populate('user_id')
+    .exec((err, result) => {
         if(err){
+            console.log(err);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(utils.successFalse(responseMessage.BOARD_READ_FAIL));
         }
         return res.status(statusCode.OK).send(utils.successTrue(responseMessage.BOARD_READ_SUCCESS, result));

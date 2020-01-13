@@ -1,4 +1,4 @@
-# Dyeong_RESTful_project
+# Dyeong_RESTful_project_mongodb
 
 ## Architecture
 ### config
@@ -8,7 +8,6 @@
 - DB를 접근하는 모듈을 담는 폴더
 
 ### module
-- db/pool.js : DB 쿼리 적용 모듈
 - utils/jwt.js : JWT 모듈
 - utils/authUtil.js : JTW 적용 미들웨어
 - utils/responseMessage.js : 응답 메세지 집합
@@ -19,3 +18,4 @@
 - Auth : 계정 관리 라우트
 - Boards : 게시글 관련 라우트
 - Boards/Comments : 댓글 관련 라우트
+- Boards/Comments : 좋아요 관련 라우트
