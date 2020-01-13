@@ -95,7 +95,7 @@ router.get('/pages/:page', async (req, res) => {
         정보들을 가져오는 기능을 수행한다.
         입력 인자로는 기준이 될 속성 값을 넣어야 한다.  */
 
-    const maxPage = await Board.countDocuments({}) / 3;
+    const maxPage = Math.ceil(await Board.countDocuments({}) / 3);
     
     Board.find()
     .populate('user_id', 'name email')
